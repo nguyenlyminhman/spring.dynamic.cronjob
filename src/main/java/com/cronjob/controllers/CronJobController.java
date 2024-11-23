@@ -26,12 +26,24 @@ public class CronJobController {
         return rs;
     }
 
-    @PostMapping("/start")
+    @PostMapping("/one/start")
     public CronJobEntity start(@RequestBody HashMap hashMapBody){
         CronJobEntity rs = null;
         String cronCode = String.valueOf(hashMapBody.getOrDefault("job", ""));
         try {
-            rs = cronJobService.findByCode(cronCode);
+            rs = cronJobService.start(cronCode);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    @PostMapping("/one/stop")
+    public CronJobEntity stop(@RequestBody HashMap hashMapBody){
+        CronJobEntity rs = null;
+        String cronCode = String.valueOf(hashMapBody.getOrDefault("job", ""));
+        try {
+            rs = cronJobService.stop(cronCode);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
