@@ -5,7 +5,8 @@ import com.cronjob.entities.CronJobEntity;
 import com.cronjob.models.CronJobModel;
 import com.cronjob.mvc.AbstractService;
 import com.cronjob.repositories.CronJobRepository;
-import com.cronjob.schedule.DynamicOneTaskScheduler;
+import com.cronjob.schedule.FirstTaskSchedule;
+import com.cronjob.schedule.SecondTaskSchedule;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,18 @@ public class CronJobService extends AbstractService<CronJobEntity, Long> {
     private final CronJobRepository cronJobRepository;
 
     @Autowired
-    private final DynamicOneTaskScheduler dynamicTaskScheduler;
+    private final FirstTaskSchedule firstTaskSchedule;
 
-    public CronJobService(CronJobRepository cronJobRepository, DynamicOneTaskScheduler dynamicTaskScheduler) {
+    @Autowired
+    private final SecondTaskSchedule secondTaskSchedule;
+
+    public CronJobService(CronJobRepository cronJobRepository,
+                          FirstTaskSchedule firstTaskSchedule,
+                          SecondTaskSchedule secondTaskSchedule) {
         super(cronJobRepository);
         this.cronJobRepository = cronJobRepository;
-        this.dynamicTaskScheduler = dynamicTaskScheduler;
+        this.firstTaskSchedule = firstTaskSchedule;
+        this.secondTaskSchedule = secondTaskSchedule;
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -46,7 +53,11 @@ public class CronJobService extends AbstractService<CronJobEntity, Long> {
             cronJob = cronJobRepository.getCronJobByCode(cronCode);
             ModelMapper modelMapper = new ModelMapper();
             CronJobModel userDTO = modelMapper.map(cronJob, CronJobModel.class);
-            dynamicTaskScheduler.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+            if ("SCHEDULE_01".equalsIgnoreCase(userDTO.getCode()))
+                firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+            if ("SCHEDULE_02".equalsIgnoreCase(userDTO.getCode()))
+                secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,11 +65,46 @@ public class CronJobService extends AbstractService<CronJobEntity, Long> {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<CronJobEntity> startAll() {
+        List<CronJobEntity> cronJobList = null;
+        try {
+            cronJobList = cronJobRepository.getAllByQuery();
+            cronJobList.forEach( cronJobEntity -> {
+                ModelMapper modelMapper = new ModelMapper();
+                CronJobModel userDTO = modelMapper.map(cronJobEntity, CronJobModel.class);
+                if ("SCHEDULE_01".equalsIgnoreCase(userDTO.getCode()))
+                    firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+                if ("SCHEDULE_02".equalsIgnoreCase(userDTO.getCode()))
+                    secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+            } );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cronJobList;
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public String stopAll() {
+        String rs = "All Stopped";
+        try {
+            firstTaskSchedule.stopScheduledTask();
+            secondTaskSchedule.stopScheduledTask();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rs;
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public CronJobEntity stop(String cronCode) {
         CronJobEntity cronJob = null;
         try {
             cronJob = cronJobRepository.getCronJobByCode(cronCode);
-            dynamicTaskScheduler.stopScheduledTask();
+            if ("SCHEDULE_01".equalsIgnoreCase(cronCode))
+                firstTaskSchedule.stopScheduledTask();
+            if ("SCHEDULE_02".equalsIgnoreCase(cronCode))
+                secondTaskSchedule.stopScheduledTask();
         } catch (Exception e) {
             e.printStackTrace();
         }

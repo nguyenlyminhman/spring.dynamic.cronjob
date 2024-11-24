@@ -11,8 +11,8 @@ CREATE TABLE public.cronjob (
 
 INSERT INTO public.cronjob
 ("_id", pattern, description, code)
-VALUES(1, '0/3 * * * * *', 'Every 3 seconds', 'TEST_CODE');
+VALUES(1, '0/3 * * * * *', 'Every 3 seconds', 'SCHEDULE_01');
 INSERT INTO public.cronjob
 ("_id", pattern, description, code)
-VALUES(2, '0/6 * * * * *', 'Every 6 seconds', 'TEST_CODE_2');
+VALUES(2, '0/6 * * * * *', 'Every 5 seconds', 'SCHEDULE_02');
 
