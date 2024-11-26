@@ -5,12 +5,12 @@ import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;
 
-@Service
+@Component
 public class FourthTaskSchedule extends ThreadPoolTaskScheduler implements ITaskScheduler {
 
     @Autowired

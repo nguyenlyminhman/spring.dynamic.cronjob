@@ -20,7 +20,7 @@ public class SecondTaskSchedule {
     }
 
     // This method will start a dynamic cron job
-    public void scheduleTaskWithCronExpression(String cronExpression, String code) {
+    public void scheduleTaskWithCronExpression(String cronExpression) {
         if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
             // Cancel the previous task if it's already scheduled
             scheduledFuture.cancel(false);
