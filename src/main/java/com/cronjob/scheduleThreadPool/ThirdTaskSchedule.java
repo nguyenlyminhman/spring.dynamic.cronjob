@@ -1,7 +1,6 @@
 package com.cronjob.scheduleThreadPool;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -12,11 +11,8 @@ import java.time.Instant;
 import java.util.Date;
 
 @Component
+@Primary
 public class ThirdTaskSchedule extends ThreadPoolTaskScheduler implements ITaskScheduler {
-
-    @Autowired
-    public ThirdTaskSchedule(TaskScheduler taskScheduler) {
-    }
 
     // This method will start a dynamic cron job
     public void scheduleTaskWithCronExpression(String cronExpression) {

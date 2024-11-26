@@ -54,9 +54,9 @@ public class CronJobService extends AbstractService<CronJobEntity, Long> {
             ModelMapper modelMapper = new ModelMapper();
             CronJobModel userDTO = modelMapper.map(cronJob, CronJobModel.class);
             if ("SCHEDULE_01".equalsIgnoreCase(userDTO.getCode()))
-                firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+                firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern());
             if ("SCHEDULE_02".equalsIgnoreCase(userDTO.getCode()))
-                secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+                secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,9 +73,9 @@ public class CronJobService extends AbstractService<CronJobEntity, Long> {
                 ModelMapper modelMapper = new ModelMapper();
                 CronJobModel userDTO = modelMapper.map(cronJobEntity, CronJobModel.class);
                 if ("SCHEDULE_01".equalsIgnoreCase(userDTO.getCode()))
-                    firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+                    firstTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern());
                 if ("SCHEDULE_02".equalsIgnoreCase(userDTO.getCode()))
-                    secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern(), userDTO.getCode());
+                    secondTaskSchedule.scheduleTaskWithCronExpression(userDTO.getPattern());
             } );
         } catch (Exception e) {
             e.printStackTrace();
